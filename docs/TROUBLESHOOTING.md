@@ -1,0 +1,126 @@
+# Troubleshooting
+
+If setup fails, run this first:
+
+```bash
+npm run doctor
+```
+
+This checks your local environment and prints pass/fail status without changing your system.
+
+## Install Fails with "gyp" or "make" Errors
+
+Install Xcode Command Line Tools, then retry:
+
+```bash
+xcode-select --install
+```
+
+```bash
+npm install
+```
+
+## Install Fails with `ModuleNotFoundError: No module named 'distutils'`
+
+Python 3.12+ removed `distutils`. Install `setuptools`:
+
+```bash
+python3 -m pip install --upgrade pip setuptools
+```
+
+```bash
+npm install
+```
+
+If that still fails, install Python 3.11 and point npm to it:
+
+```bash
+brew install python@3.11
+```
+
+```bash
+npm config set python $(brew --prefix python@3.11)/bin/python3.11
+```
+
+```bash
+npm install
+```
+
+To undo that Python override later:
+
+```bash
+npm config delete python
+```
+
+## Install Fails with `fatal error: 'functional' file not found`
+
+C++ headers are missing/broken, usually due to Xcode CLT issues.
+
+Check toolchain first:
+
+```bash
+xcode-select -p
+```
+
+```bash
+xcrun --sdk macosx --show-sdk-path
+```
+
+If either command fails (or the error persists), reinstall CLT:
+
+```bash
+sudo rm -rf /Library/Developer/CommandLineTools
+```
+
+```bash
+xcode-select --install
+```
+
+Then retry:
+
+```bash
+npm install
+```
+
+## Install Fails on `node-pty`
+
+`node-pty` is native and requires macOS toolchains. Confirm:
+
+- macOS 13+
+- Xcode CLT installed
+- Python 3 with `setuptools`/`distutils` available
+
+Then retry `npm install`.
+
+## App Launches but No Claude Response
+
+Verify Claude CLI is installed and authenticated:
+
+```bash
+claude --version
+```
+
+```bash
+claude
+```
+
+## `Alt+Space` Does Not Toggle
+
+Grant Accessibility permissions:
+
+- System Settings -> Privacy & Security -> Accessibility
+
+Fallback shortcut:
+
+- `Cmd+Shift+K`
+
+## Marketplace Shows "Failed to Load"
+
+Expected when offline. Marketplace needs internet access; core app features continue to work.
+
+## Window Is Invisible / No UI
+
+Try:
+
+- `Cmd+Shift+K`
+- Confirm app is running from the menu bar tray

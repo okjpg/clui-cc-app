@@ -21,11 +21,23 @@ A lightweight, transparent desktop overlay for [Claude Code](https://docs.anthro
 
 ## Quick Start (Recommended)
 
-Copy and run these commands one at a time:
+Run these commands one at a time:
+
+**1) Clone the repo**
 
 ```bash
 git clone https://github.com/lcoutodemos/clui-cc.git
+```
+
+**2) Enter the project folder**
+
+```bash
 cd clui-cc
+```
+
+**3) Start the app**
+
+```bash
 ./start.command
 ```
 
@@ -41,7 +53,8 @@ You can also double-click `start.command` and `stop.command` from Finder.
 
 Toggle the overlay: **Alt+Space** (or **Cmd+Shift+K** as fallback).
 
-## Prerequisites (Detailed)
+<details>
+<summary><strong>Setup Prerequisites (Detailed)</strong></summary>
 
 You need **macOS 13+**. Then install these one at a time — copy each command and paste it into Terminal.
 
@@ -95,7 +108,10 @@ brew install whisper-cli
 
 > **No API keys or `.env` file required.** Clui CC uses your existing Claude Code CLI authentication (Pro/Team/Enterprise subscription).
 
-## Development
+</details>
+
+<details>
+<summary><strong>Development Commands</strong></summary>
 
 ### Hot Reload
 
@@ -121,7 +137,10 @@ npm run build
 npx electron .
 ```
 
-## Architecture
+</details>
+
+<details>
+<summary><strong>Architecture and Internals</strong></summary>
 
 Clui CC is an Electron app with three layers:
 
@@ -142,7 +161,7 @@ Clui CC is an Electron app with three layers:
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full deep-dive.
 
-## Project Structure
+### Project Structure
 
 ```
 src/
@@ -161,7 +180,7 @@ src/
 └── shared/                 # Canonical types, IPC channel definitions
 ```
 
-## How It Works
+### How It Works
 
 1. Each tab creates a `claude -p --output-format stream-json` subprocess.
 2. NDJSON events are parsed by `RunManager` and normalized by `EventNormalizer`.
@@ -170,7 +189,7 @@ src/
 5. The renderer polls backend health every 1.5s and reconciles tab state.
 6. Sessions are resumed with `--resume <session-id>` for continuity.
 
-## Network Behavior
+### Network Behavior
 
 Clui CC operates almost entirely offline. The only outbound network calls are:
 
@@ -181,119 +200,17 @@ Clui CC operates almost entirely offline. The only outbound network calls are:
 
 No telemetry, analytics, or auto-update mechanisms. All core Claude Code interaction goes through the local CLI.
 
+</details>
+
 ## Troubleshooting
 
-**`npm install` fails with "gyp" or "make" errors**
+For setup issues and recovery commands, see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
 
-Install Xcode Command Line Tools, then retry:
-
-```bash
-xcode-select --install
-```
-
-```bash
-npm install
-```
-
-**`npm install` fails with `ModuleNotFoundError: No module named 'distutils'`**
-
-Python 3.12+ removed `distutils`. Install `setuptools` to restore it:
-
-```bash
-python3 -m pip install --upgrade pip setuptools
-```
-
-```bash
-npm install
-```
-
-If that still fails, install Python 3.11 and point npm to it:
-
-```bash
-brew install python@3.11
-```
-
-```bash
-npm config set python $(brew --prefix python@3.11)/bin/python3.11
-```
-
-```bash
-npm install
-```
-
-To undo the Python override later:
-
-```bash
-npm config delete python
-```
-
-**`npm install` fails with `fatal error: 'functional' file not found`**
-
-Your C++ headers are broken. This usually means Xcode Command Line Tools need to be reinstalled.
-
-First, check if they're installed:
-
-```bash
-xcode-select -p
-```
-
-```bash
-xcrun --sdk macosx --show-sdk-path
-```
-
-If either command fails, or the error persists, reinstall them:
-
-```bash
-sudo rm -rf /Library/Developer/CommandLineTools
-```
-
-```bash
-xcode-select --install
-```
-
-Then retry:
-
-```bash
-npm install
-```
-
-**`npm install` fails on `node-pty`**
-
-`node-pty` is a native macOS module. It does not build on Linux or Windows. Make sure you have Xcode CLT and Python setuptools installed (see above).
-
-**App launches but no Claude response**
-
-Make sure the CLI is installed and authenticated:
-
-```bash
-claude --version
-```
-
-```bash
-claude
-```
-
-**`Alt+Space` doesn't toggle the overlay**
-
-Grant Accessibility permissions: System Settings → Privacy & Security → Accessibility. You can also try the fallback shortcut **Cmd+Shift+K**.
-
-**Marketplace shows "Failed to load"**
-
-This is normal when offline. The marketplace needs internet to fetch the catalog. All core features work without it.
-
-**Window is invisible / no UI**
-
-Try **Cmd+Shift+K** as an alternative toggle. Check if the app is running in the menu bar tray.
-
-**Still stuck?**
-
-Run the environment doctor to see what's wrong:
+Quick self-check:
 
 ```bash
 npm run doctor
 ```
-
-This prints pass/fail for every dependency without changing anything on your system.
 
 ## Tested On
 
