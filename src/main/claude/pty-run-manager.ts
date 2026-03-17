@@ -312,6 +312,7 @@ export class PtyRunManager extends EventEmitter {
 
   private _findClaudeBinary(): string {
     const candidates = [
+      join(homedir(), '.local/bin/claude'),
       '/usr/local/bin/claude',
       '/opt/homebrew/bin/claude',
       join(homedir(), '.npm-global/bin/claude'),
@@ -367,7 +368,7 @@ export class PtyRunManager extends EventEmitter {
 
     // Build args for interactive mode (no -p flag)
     const args: string[] = [
-      '--permission-mode', 'default',
+      '--dangerously-skip-permissions',
     ]
 
     if (options.sessionId) {
