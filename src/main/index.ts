@@ -126,17 +126,19 @@ function createWindow(): void {
     },
   })
 
-  // Belt-and-suspenders: panel already joins all spaces and floats,
-  // but explicit flags ensure correct behavior on older Electron builds.
-  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+  // Float above other windows but don't pin to all workspaces —
+  // toggleWindow handles moving to the active Space on each show.
   mainWindow.setAlwaysOnTop(true, 'screen-saver')
 
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
-    // Enable OS-level click-through for transparent regions.
-    // { forward: true } ensures mousemove events still reach the renderer
-    // so it can toggle click-through off when cursor enters interactive UI.
-    mainWindow?.setIgnoreMouseEvents(true, { forward: true })
+    // Delay click-through setup to ensure renderer has painted.
+    // Without this, the window can appear non-interactive or blank on slow launches.
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.setIgnoreMouseEvents(true, { forward: true })
+      }
+    }, 300)
     if (process.env.ELECTRON_RENDERER_URL) {
       mainWindow?.webContents.openDevTools({ mode: 'detach' })
     }
@@ -186,10 +188,19 @@ function toggleWindow(source = 'unknown'): void {
       log(`[spaces] toggle#${toggleId} move-to-display id=${display.id}`)
       snapshotWindowState(`toggle#${toggleId} pre-show`)
     }
-    // As an accessory app (app.dock.hide), show() + focus gives keyboard
-    // without deactivating the active app — hover preserved everywhere.
+    // Briefly enable visibleOnAllWorkspaces so the window can move to the
+    // current Space, then disable it so it stays only on this Space.
+    mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+    mainWindow.setAlwaysOnTop(true, 'screen-saver')
     mainWindow.show()
     mainWindow.webContents.focus()
+
+    // After showing, pin to the current Space so it doesn't stick to the old one
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.setVisibleOnAllWorkspaces(false)
+      }
+    }, 100)
     broadcast(IPC.WINDOW_SHOWN)
     if (SPACES_DEBUG) scheduleToggleSnapshots(toggleId, 'show')
   }

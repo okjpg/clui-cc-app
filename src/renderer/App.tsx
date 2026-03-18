@@ -194,7 +194,7 @@ export default function App() {
           */}
           <motion.div
             data-clui-ui
-            className="overflow-hidden flex flex-col drag-region"
+            className="flex flex-col drag-region"
             animate={{
               width: isExpanded ? cardExpandedWidth : cardCollapsedWidth,
               marginBottom: isExpanded ? 10 : -14,
@@ -211,6 +211,11 @@ export default function App() {
               borderRadius: 20,
               position: 'relative',
               zIndex: isExpanded ? 20 : 10,
+              overflow: 'hidden',
+              // Isolate compositing layer to prevent ghost artifacts on macOS
+              // transparent windows with disableHardwareAcceleration()
+              willChange: 'transform, width, margin',
+              transform: 'translateZ(0)',
             }}
           >
             {/* Tab strip — always mounted */}
@@ -237,7 +242,7 @@ export default function App() {
 
           {/* ─── Input row — circles float outside left ─── */}
           {/* marginBottom: shadow buffer so the glass-surface drop shadow isn't clipped at the native window edge */}
-          <div data-clui-ui className="relative" style={{ minHeight: 46, zIndex: 15, marginBottom: 10 }}>
+          <div data-clui-ui className="relative" style={{ minHeight: 46, zIndex: 15, marginBottom: 10, transform: 'translateZ(0)' }}>
             {/* Stacked circle buttons — expand on hover */}
             <div
               data-clui-ui
