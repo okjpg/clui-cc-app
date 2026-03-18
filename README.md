@@ -35,6 +35,9 @@ This fork adds features focused on productivity and native macOS experience:
 - **Double-click** a tab title to rename it inline
 - Enter to confirm, Escape to cancel
 
+### macOS Spaces Fix
+- Window follows the active Space/desktop when toggled — no more jumping to the wrong desktop
+
 ## All Original Features
 
 - **Floating overlay** — transparent, click-through window that stays on top (`Alt+Space`)
@@ -80,7 +83,8 @@ Then open from **Spotlight** (`Cmd+Space` → "Clui CC") or the Applications fol
 If you prefer running from terminal:
 
 ```bash
-./start.command
+./commands/setup.command
+./commands/start.command
 ```
 
 ## Development
@@ -91,6 +95,23 @@ npm run dev
 ```
 
 Renderer changes update instantly. Main-process changes require restarting `npm run dev`.
+
+| Command | Purpose |
+|---------|---------|
+| `./commands/setup.command` | Environment check + install dependencies |
+| `./commands/start.command` | Build and launch from source |
+| `./commands/stop.command` | Stop all Clui CC processes |
+| `npm run build` | Production build (no packaging) |
+| `npm run dist` | Package as macOS `.app` into `dist/` |
+| `npm run doctor` | Run environment diagnostic |
+
+## Troubleshooting
+
+For setup issues, see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) or run:
+
+```bash
+npm run doctor
+```
 
 ## Credits
 
@@ -107,14 +128,6 @@ Renderer changes update instantly. Main-process changes require restarting `npm 
 | Python | 3.12 (with setuptools installed) |
 | Electron | 33.x |
 | Claude Code CLI | 2.1.71 |
-
-## Troubleshooting
-
-For setup issues, see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) or run:
-
-```bash
-npm run doctor
-```
 
 ## License
 
