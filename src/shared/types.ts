@@ -357,6 +357,9 @@ export const IPC = {
   MARKETPLACE_INSTALL: 'clui:marketplace-install',
   MARKETPLACE_UNINSTALL: 'clui:marketplace-uninstall',
 
+  // Skill content
+  LOAD_SKILL: 'clui:load-skill',
+
   // Permission mode
   SET_PERMISSION_MODE: 'clui:set-permission-mode',
 

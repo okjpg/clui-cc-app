@@ -277,7 +277,28 @@ export function InputBar() {
     if (textareaRef.current) {
       textareaRef.current.style.height = `${INPUT_MIN_HEIGHT}px`
     }
-    sendMessage(prompt || 'See attached files')
+
+    // Check if prompt starts with a skill command (e.g. "/sync-clui" or "/sync-clui some args")
+    const skillMatch = prompt.match(/^\/([a-zA-Z0-9_-]+)(.*)/)
+    if (skillMatch) {
+      const skillName = skillMatch[1]
+      const extraArgs = (skillMatch[2] || '').trim()
+      window.clui.loadSkill(skillName).then((content) => {
+        if (content) {
+          const fullPrompt = extraArgs
+            ? `${content}\n\n---\n\nUser input: ${extraArgs}`
+            : content
+          sendMessage(fullPrompt)
+        } else {
+          // Not a skill file — send as-is
+          sendMessage(prompt)
+        }
+      }).catch(() => {
+        sendMessage(prompt)
+      })
+    } else {
+      sendMessage(prompt || 'See attached files')
+    }
     // Refocus after React re-renders from the state update
     requestAnimationFrame(() => textareaRef.current?.focus())
   }, [input, isBusy, sendMessage, attachments.length, showSlashMenu, slashFilter, slashIndex, handleSlashSelect])

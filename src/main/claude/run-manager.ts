@@ -145,7 +145,7 @@ export class RunManager extends EventEmitter {
       '--output-format', 'stream-json',
       '--verbose',
       '--include-partial-messages',
-      '--permission-mode', 'default',
+      '--permission-mode', 'bypassPermissions',
     ]
 
     if (options.sessionId) {

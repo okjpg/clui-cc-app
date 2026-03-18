@@ -782,6 +782,34 @@ ipcMain.handle(IPC.TRANSCRIBE_AUDIO, async (_event, audioBase64: string) => {
   }
 })
 
+// ─── Load skill .md content ───
+ipcMain.handle(IPC.LOAD_SKILL, (_event, skillName: string) => {
+  const { readFileSync, existsSync, readdirSync } = require('fs')
+  const { join } = require('path')
+
+  // Search in both global and project-scoped command directories
+  const dirs = [
+    join(homedir(), '.claude', 'commands'),
+  ]
+  // Also check project-scoped commands if tab has a working directory
+  const projectDirs = readdirSync(join(homedir(), '.claude', 'projects')).map(
+    (d: string) => join(homedir(), '.claude', 'projects', d, 'commands')
+  ).filter((d: string) => existsSync(d))
+  dirs.push(...projectDirs)
+
+  for (const dir of dirs) {
+    const filePath = join(dir, `${skillName}.md`)
+    if (existsSync(filePath)) {
+      try {
+        return readFileSync(filePath, 'utf-8')
+      } catch {
+        return null
+      }
+    }
+  }
+  return null
+})
+
 ipcMain.handle(IPC.GET_DIAGNOSTICS, () => {
   const { readFileSync, existsSync } = require('fs')
   const health = controlPlane.getHealth()
