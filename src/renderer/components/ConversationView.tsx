@@ -750,7 +750,7 @@ function ToolGroup({ tools, skipMotion }: { tools: Message[]; skipMotion?: boole
                                 className="px-2 py-1 whitespace-pre-wrap break-all overflow-y-auto"
                                 aria-label="Removed"
                                 style={{
-                                  background: 'rgba(248,81,73,0.1)',
+                                  background: colors.diffRemovedBg,
                                   color: colors.textSecondary,
                                   maxHeight: 120,
                                   margin: 0,
@@ -764,7 +764,7 @@ function ToolGroup({ tools, skipMotion }: { tools: Message[]; skipMotion?: boole
                                 className="px-2 py-1 whitespace-pre-wrap break-all overflow-y-auto"
                                 aria-label="Added"
                                 style={{
-                                  background: 'rgba(63,185,80,0.1)',
+                                  background: colors.diffAddedBg,
                                   color: colors.textSecondary,
                                   maxHeight: 120,
                                   margin: 0,
